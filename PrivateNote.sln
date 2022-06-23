@@ -3,9 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{FD95E404-10BD-489F-B7A1-E4D4C9D6CF1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E87C6EB7-2C31-4679-B47B-FF585190C970}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrivateNote.Api", "Src\PrivateNote.Api\PrivateNote.Api.csproj", "{3ACA353B-0E7E-4B1C-96E0-2AFE47608863}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4744245-B244-4201-BF63-250797ED4BDF}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3ACA353B-0E7E-4B1C-96E0-2AFE47608863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ACA353B-0E7E-4B1C-96E0-2AFE47608863}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3ACA353B-0E7E-4B1C-96E0-2AFE47608863}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3ACA353B-0E7E-4B1C-96E0-2AFE47608863}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3ACA353B-0E7E-4B1C-96E0-2AFE47608863} = {FD95E404-10BD-489F-B7A1-E4D4C9D6CF1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1C972AC8-CD61-4849-BE81-736E05673216}
