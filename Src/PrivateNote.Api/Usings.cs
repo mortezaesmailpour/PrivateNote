@@ -1,0 +1,16 @@
+﻿global using System.ComponentModel.DataAnnotations;
+global using System.Diagnostics;
+global using System.Text;
+global using System.Text.Json;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.IdentityModel.Tokens;
+global using Microsoft.OpenApi.Models;
+global using PrivateNote.Service;
+global using PrivateNote.Service.Contract;
+global using PrivateNote.Service.Model;
+global using PrivateNote.Api.Dto;
+global using PrivateNote.Api.Dto.Requests;
+global using PrivateNote.Api.Dto.Responses;
