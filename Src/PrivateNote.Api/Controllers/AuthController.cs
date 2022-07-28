@@ -75,6 +75,11 @@ public class AuthController : ControllerBase
             _logger.LogInformation("user was authenticated successfully. token = {0}", jwtToken);
             return Ok(new SignInResponse { Token = jwtToken });
         }
+        catch (InvalidDataException e)
+        {
+            _logger.LogError(e, "Username or password in not correct!");
+            return BadRequest("Username or Password in not Correct!");
+        }
         catch (Exception e)
         {
             _logger.LogError(e, ErrorMessage, nameof(SignIn), request);
