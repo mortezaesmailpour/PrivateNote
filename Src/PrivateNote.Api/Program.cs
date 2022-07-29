@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using PrivateNote.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,12 +8,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<PrivateNoteDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-services.AddIdentity<User, Role>()
+services.AddIdentity<RsaUser, Role>()
     .AddEntityFrameworkStores<PrivateNoteDbContext>()
     .AddDefaultTokenProviders();
 
 services.AddScoped(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
-services.AddScoped(typeof(IAuthService), typeof(AuthService));
+services.AddScoped(typeof(IRsaAuthService), typeof(RsaAuthService));
 services.AddScoped(typeof(IUserManager), typeof(UserManager));
 services.AddScoped(typeof(IClaimService), typeof(ClaimService));
 services.AddScoped(typeof(ITokenService), typeof(JwtTokenService));

@@ -1,4 +1,5 @@
 namespace PrivateNote.Api.Controllers;
+
 [ApiController]
 [Route("api/[controller]/[action]")]
 public class AuthController : ControllerBase
@@ -7,12 +8,12 @@ public class AuthController : ControllerBase
     private const string ErrorMessage = "something went wrong while running {0} with request: {1}";
     private const string FinishedMessage = "{0} with request: {1} finished in {2}ms";
 
-    private readonly IAuthService _authService;
+    private readonly IRsaAuthService _authService;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(IRsaAuthService rsaAuthService, ILogger<AuthController> logger)
     {
-        _authService = authService;
+        _authService = rsaAuthService;
         _logger = logger;
     }
 
@@ -89,6 +90,60 @@ public class AuthController : ControllerBase
         {
             stopWatch.Stop();
             _logger.LogInformation(FinishedMessage, nameof(SignIn), request, stopWatch.ElapsedMilliseconds);
+        }
+    }
+
+
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<IActionResult> RsaSignUp(RsaSignUpRequest request)
+    {
+        _logger.LogInformation(StartMessage, nameof(RsaSignUp), request);
+        var stopWatch = Stopwatch.StartNew();
+        try
+        {
+            _ = await _authService.RsaRegisterAsync(request.UserName, request.PublicKey, request.Signature);
+            _logger.LogInformation("user was registered successfully.");
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, ErrorMessage, nameof(RsaSignUp), request);
+            throw;
+        }
+        finally
+        {
+            stopWatch.Stop();
+            _logger.LogInformation(FinishedMessage, nameof(RsaSignUp), request, stopWatch.ElapsedMilliseconds);
+        }
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<ActionResult<RsaSignInResponse>> RsaSignIn(RsaSignInRequest request)
+    {
+        _logger.LogInformation(StartMessage, nameof(RsaSignIn), request);
+        var stopWatch = Stopwatch.StartNew();
+        try
+        {
+            var encryptedToken = await _authService.RsaAuthenticateAsync(request.UserName, request.PublicKey, request.Signature);
+            _logger.LogInformation("user was authenticated successfully. encryptedToken = {0}", encryptedToken);
+            return Ok(new RsaSignInResponse { EncryptedToken = encryptedToken });
+        }
+        catch (InvalidDataException e)
+        {
+            _logger.LogError(e, "Signature in not correct!");
+            return BadRequest("Signature in not Correct!");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, ErrorMessage, nameof(RsaSignIn), request);
+            throw;
+        }
+        finally
+        {
+            stopWatch.Stop();
+            _logger.LogInformation(FinishedMessage, nameof(RsaSignIn), request, stopWatch.ElapsedMilliseconds);
         }
     }
 
