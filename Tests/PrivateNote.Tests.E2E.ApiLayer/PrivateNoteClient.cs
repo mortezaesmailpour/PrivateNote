@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using PrivateNote.Api.Dto;
+﻿using PrivateNote.Api.Dto;
 using PrivateNote.Api.Dto.Responses;
 using PrivateNote.Service.Contract;
-using System.Text;
 
 namespace PrivateNote.Tests.E2E.ApiLayer;
+
 internal class PrivateNoteClient
 {
     private readonly string _baseUrl;
@@ -36,8 +35,9 @@ internal class PrivateNoteClient
         var json = JsonConvert.SerializeObject(signInData);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await client.PostAsync(_baseUrl + "SignIn", content);
-        //if (!response.IsSuccessStatusCode)
-        //    _logger.LogError("Incorrect Username or Password");
+        if (!response.IsSuccessStatusCode)
+            //_logger.LogError("Incorrect Username or Password");
+            return null;
         string responseString = await response.Content.ReadAsStringAsync();
         var signInResponse = JsonConvert.DeserializeObject<SignInResponse>(responseString);
         //if (signInResponse is null)
@@ -45,13 +45,49 @@ internal class PrivateNoteClient
         return signInResponse?.Token;
     }
 
+    public async Task<bool> RsaSignUpAsync(string userName, string publicKey, string signature)
+    {
+        var signUpData = new Dictionary<string, string>();
+        signUpData.Add("UserName", userName);
+        signUpData.Add("PublicKey", publicKey);
+        signUpData.Add("Signature", signature);
+        HttpClient client = new();
+        var json = JsonConvert.SerializeObject(signUpData);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(_baseUrl + "RsaSignUp", content);
+        //if (!response.IsSuccessStatusCode)
+        //    _logger.LogError("SignUp Not Success response : " + response.ToString());
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<string?> RsaSignInAsync(string userName, string publicKey, string signature)
+    {
+        var signInData = new Dictionary<string, string>();
+        signInData.Add("UserName", userName);
+        signInData.Add("PublicKey", publicKey);
+        signInData.Add("Signature", signature);
+        HttpClient client = new();
+        var json = JsonConvert.SerializeObject(signInData);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await client.PostAsync(_baseUrl + "RsaSignIn", content);
+        if (!response.IsSuccessStatusCode)
+            //_logger.LogError("Incorrect Signature or PublicKey");
+            return null;
+        string responseString = await response.Content.ReadAsStringAsync();
+        var signInResponse = JsonConvert.DeserializeObject<RsaSignInResponse>(responseString);
+        //if (signInResponse is null)
+        //    _logger.LogError("Incorrect Json format in SignIn response");
+        return signInResponse?.EncryptedToken;
+    }
+
     public async Task<IUser?> WhoAmI(string token)
     {
         HttpClient client = new();
         client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
         var response = await client.GetAsync(_baseUrl + "HowAmI");
-        //if (!response.IsSuccessStatusCode)
-        //    _logger.LogError("token is not valid");
+        if (!response.IsSuccessStatusCode)
+            //_logger.LogError("token is not valid");
+            return null;
         string responseString = await response.Content.ReadAsStringAsync();
         var userInfo = JsonConvert.DeserializeObject<UserInfo>(responseString);
         //if (userInfo is null)
