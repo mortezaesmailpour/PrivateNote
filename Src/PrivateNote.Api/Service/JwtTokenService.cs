@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-
-namespace PrivateNote.Service;
+﻿namespace PrivateNote.Service;
 
 public class JwtTokenService : ITokenService
 {

@@ -2,10 +2,10 @@
 
 public class AuthService : IAuthService
 {
-    private readonly IUserManager _userManager;
-    private readonly IClaimService _claimService;
-    private readonly ITokenService _tokenService;
-    private readonly ILoggerAdapter<AuthService> _logger;
+    protected readonly IUserManager _userManager;
+    protected readonly IClaimService _claimService;
+    protected readonly ITokenService _tokenService;
+    protected readonly ILoggerAdapter<AuthService> _logger;
 
     public AuthService(IUserManager userManager, IClaimService claimService, ITokenService tokenService,
         ILoggerAdapter<AuthService> logger)

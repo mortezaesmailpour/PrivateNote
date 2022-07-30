@@ -1,7 +1,6 @@
-﻿namespace PrivateNote.Api.Dto
+﻿namespace PrivateNote.Api.Dto;
+
+public class UserInfo : IUser
 {
-    public class UserInfo : IUser
-    {
-        public string UserName { get; set; }
-    }
+    public string UserName { get; init; }
 }
