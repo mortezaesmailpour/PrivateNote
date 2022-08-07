@@ -48,7 +48,12 @@ public class AuthController : ControllerBase
         var stopWatch = Stopwatch.StartNew();
         try
         {
-            _ = await _authService.RegisterAsync(request.UserName, request.Password);
+            var result = await _authService.RegisterAsync(request.UserName, request.Password);
+            if(!result)
+            {
+                _logger.LogError("user registeration was faild.");
+                return ValidationProblem();
+            }
             _logger.LogInformation("user was registered successfully.");
             return Ok();
         }

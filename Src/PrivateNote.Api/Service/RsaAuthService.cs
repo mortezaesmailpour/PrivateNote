@@ -30,7 +30,7 @@ public class RsaAuthService : AuthService , IRsaAuthService
         var isSignatureValid = _rsaService.Verify(userName, signature,publicKey);
         if (!isSignatureValid) throw new InvalidDataException();
         var roles = await _userManager.GetRolesAsync(user);
-        var token = _tokenService.GenerateToken(user.UserName, roles);
+        var token = _tokenService.GenerateToken(user.Id.ToString(), user.UserName, roles);
         var encryptedToken = _rsaService.Encrypte(token, publicKey);
         _ = encryptedToken ?? throw new InvalidDataException();
         return encryptedToken;
