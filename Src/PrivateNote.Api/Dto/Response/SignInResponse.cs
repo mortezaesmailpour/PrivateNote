@@ -2,7 +2,7 @@
 
 public class SignInResponse
 {
-    public string Token { get; init; }
+    public string Token { get; init; } = String.Empty;
 
     public override string ToString()
     {

@@ -1,4 +1,6 @@
-using PrivateNote.Api.Data;
+using PrivateNote.Data;
+using Repositories;
+using Repositories.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -17,6 +19,8 @@ services.AddScoped(typeof(IRsaAuthService), typeof(RsaAuthService));
 services.AddScoped(typeof(IUserManager), typeof(UserManager));
 services.AddScoped(typeof(IClaimService), typeof(ClaimService));
 services.AddScoped(typeof(ITokenService), typeof(JwtTokenService));
+services.AddScoped(typeof(INoteRepository), typeof(NoteRepository));
+services.AddScoped(typeof(INoteService), typeof(NoteService));
 
 
 builder.Services.AddControllers();

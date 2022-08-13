@@ -2,5 +2,5 @@
 
 public class RsaUserInfo : UserInfo, IRsaUser
 {
-    public string PublickKey { get; init; }
+    public string PublickKey { get; init; } = String.Empty;
 }

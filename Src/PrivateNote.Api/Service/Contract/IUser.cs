@@ -2,5 +2,6 @@
 
 public interface IUser
 {
+    Guid Id { get; }
     string UserName { get; }
 }

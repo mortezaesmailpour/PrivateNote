@@ -48,7 +48,12 @@ public class AuthController : ControllerBase
         var stopWatch = Stopwatch.StartNew();
         try
         {
-            _ = await _authService.RegisterAsync(request.UserName, request.Password);
+            var result = await _authService.RegisterAsync(request.UserName, request.Password);
+            if(!result)
+            {
+                _logger.LogError("user registeration was faild.");
+                return ValidationProblem();
+            }
             _logger.LogInformation("user was registered successfully.");
             return Ok();
         }
@@ -163,7 +168,7 @@ public class AuthController : ControllerBase
             else
             {
                 _logger.LogInformation("your user = {0}", user.UserName);
-                return Ok(new UserInfo() { UserName = user.UserName });
+                return Ok(new UserInfo() { Id = user.Id, UserName = user.UserName });
             }
         }
         catch (Exception e)

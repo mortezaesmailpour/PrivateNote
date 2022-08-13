@@ -25,7 +25,14 @@ public class AuthService : IAuthService
         return user;
     }
 
-    public async Task<bool> RegisterAsync(string userName, string password) =>  await _userManager.CreateAsync(new User { UserName = userName }, password) == IdentityResult.Success;
+    public async Task<bool> RegisterAsync(string userName, string password)
+    {
+        var result = await _userManager.CreateAsync(new RsaUser { UserName = userName }, password);
+        if(result.Succeeded) 
+            return true;
+        _logger.LogError(result.ToString());    
+        return false;
+    }
 
 
     public async Task<string> AuthenticateAsync(string userName, string password)
@@ -36,7 +43,7 @@ public class AuthService : IAuthService
         if (!isPasswordValid)
             throw new InvalidDataException();
         var roles = await _userManager.GetRolesAsync(user);
-        return _tokenService.GenerateToken(user.UserName, roles);
+        return _tokenService.GenerateToken(user.Id.ToString(), user.UserName, roles);
     }
 
     public async Task<IUser?> GetMyUserAsync()
