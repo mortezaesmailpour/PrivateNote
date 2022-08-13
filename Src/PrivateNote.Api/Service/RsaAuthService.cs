@@ -1,7 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography.Xml;
-
-namespace PrivateNote.Service;
+﻿namespace PrivateNote.Service;
 
 public class RsaAuthService : AuthService , IRsaAuthService
 {

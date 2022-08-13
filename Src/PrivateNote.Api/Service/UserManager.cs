@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using PrivateNote.Service.Contract;
-using PrivateNote.Service.Model;
+﻿using Microsoft.Extensions.Options;
 
 namespace PrivateNote.Service;
 

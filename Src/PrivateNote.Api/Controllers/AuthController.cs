@@ -168,7 +168,7 @@ public class AuthController : ControllerBase
             else
             {
                 _logger.LogInformation("your user = {0}", user.UserName);
-                return Ok(new UserInfo() { UserName = user.UserName });
+                return Ok(new UserInfo() { Id = user.Id, UserName = user.UserName });
             }
         }
         catch (Exception e)

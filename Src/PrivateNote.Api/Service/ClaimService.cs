@@ -11,9 +11,9 @@ public class ClaimService : IClaimService
 
     public Guid GetUserId()
     {
-        var userNameClaim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+        var userNameClaim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userNameClaim?.Value))
-            throw new KeyNotFoundException(ClaimTypes.Name + " is not in the Claims");
+            throw new KeyNotFoundException(ClaimTypes.NameIdentifier + " is not in the Claims");
         return Guid.Parse(userNameClaim.Value);
     }
 

@@ -3,13 +3,13 @@
 public class RsaSignInRequest
 {
     [Required]
-    public string UserName { get; init; }
+    public string UserName { get; init; } = String.Empty;
 
     [Required]
-    public string PublicKey { get; init; }
+    public string PublicKey { get; init; } = String.Empty;
 
     [Required]
-    public string Signature { get; init; }
+    public string Signature { get; init; } = String.Empty;
 
     public override string ToString()
     {

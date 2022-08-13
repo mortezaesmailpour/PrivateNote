@@ -1,8 +1,9 @@
 ﻿namespace PrivateNote.Api.Dto.Responses;
 
-public class RsaSignInResponse
-{
-    public string EncryptedToken { get; init; } = String.Empty;
+public class UpdateNoteResponse
+{ 
+    public Guid NoteId { get; init; }
+    public DateTime? LastModificationTime { get; init; }
 
     public override string ToString()
     {
