@@ -9,6 +9,7 @@ public class NoteController : ControllerBase
     private readonly PrivateNoteDbContext _context;
     private readonly INoteService _noteService;
 
+
     public NoteController(INoteService noteService, PrivateNoteDbContext context)
     {
         _noteService = noteService;
@@ -19,6 +20,13 @@ public class NoteController : ControllerBase
     public async Task<ActionResult<IEnumerable<RsaNote>>> GetNotes()
     {
         var notes = await _noteService.GetMyNotesAsync();
+        return Ok(notes);
+    }
+    
+    [HttpGet("All")]
+    public async Task<ActionResult<IEnumerable<RsaNote>>> GetAllNotes()
+    {
+        var notes = await _noteService.GetAllNotes();
         return Ok(notes);
     }
     
