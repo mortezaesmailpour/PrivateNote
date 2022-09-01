@@ -40,15 +40,11 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    private async Task<IActionResult> SignUp(SignUpRequest request)
+    public async Task<IActionResult> SignUp(SignUpRequest request)
     {
         var result = await TryRun(() => _authService.RegisterAsync(request.UserName, request.Password));
         if (!result.Succeeded)
-        {
-            _logger.LogError("user registration was failed");
             return ValidationProblem();
-        }
-        _logger.LogInformation("user was registered successfully");
         return Ok();
     }
     
@@ -56,17 +52,10 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest request)
     {
-        var token = await TryRun(async () =>
-        {
-            var (result ,jwtToken )= await _authService.AuthenticateAsync(request.UserName, request.Password);
-            if (result.Succeeded) return jwtToken;
-            _logger.LogError("user authentication was failed with error {0}",result.Errors);
-            return null;
-        });
-        if (string.IsNullOrEmpty(token))
+        var jwtToken = await TryRun(() => _authService.AuthenticateAsync(request.UserName, request.Password));
+        if (string.IsNullOrEmpty(jwtToken))
             return BadRequest("user authentication was failed");
-        _logger.LogInformation("user was authenticated successfully. token = {0}", token);
-        return Ok(new SignInResponse { Token = token });
+        return Ok(new SignInResponse { Token = jwtToken });
     }
 
     [HttpPost]
@@ -76,31 +65,18 @@ public class AuthController : ControllerBase
         var result = await TryRun(() =>
             _authService.RsaRegisterAsync(request.UserName, request.PublicKey, request.Signature));
         if (result != IdentityResult.Success)
-        {
-            _logger.LogError("user registration was failed with errors : {0}", result.Errors);
             return BadRequest("user registration was failed");
-        }
-
-        _logger.LogInformation("user was registered successfully");
         return Ok();
     }
-
 
     [HttpPost]
     [AllowAnonymous]
     public async Task<ActionResult<RsaSignInResponse>> RsaSignIn(RsaSignInRequest request)
     {
-        var token = await TryRun(async () =>
-        {
-            var (result ,encryptedToken )= await _authService.RsaAuthenticateAsync(request.UserName, request.PublicKey, request.Signature);
-            if (result.Succeeded) return encryptedToken;
-            _logger.LogError("user authentication was failed with error {0}",result.Errors);
-            return null;
-        });
-        if (string.IsNullOrEmpty(token))
+        var encryptedJwtToken = await TryRun( () => _authService.RsaAuthenticateAsync(request.UserName, request.PublicKey, request.Signature));
+        if (string.IsNullOrEmpty(encryptedJwtToken))
             return BadRequest("user authentication was failed");
-        _logger.LogInformation("user was authenticated successfully. encryptedToken = {0}", token);
-        return Ok(new RsaSignInResponse { EncryptedToken = token });
+        return Ok(new RsaSignInResponse { EncryptedToken = encryptedJwtToken });
     }
     
     [HttpGet]
@@ -113,16 +89,9 @@ public class AuthController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> HowAmI()
     {
-        var user = await _authService.GetMyUserAsync();
+        var user = await TryRun(() => _authService.GetMyUserAsync());
         if (user is null)
-        {
-            _logger.LogError("your user not found.");
             return BadRequest("your user not found.");
-        }
-        else
-        {
-            _logger.LogInformation("your user = {0}", user.UserName);
-            return Ok(new UserInfo() { Id = user.Id, UserName = user.UserName });
-        }
+        return Ok(new UserInfo() { Id = user.Id, UserName = user.UserName });
     }
 }

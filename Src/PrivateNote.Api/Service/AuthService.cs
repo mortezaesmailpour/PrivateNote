@@ -27,22 +27,33 @@ public class AuthService : IAuthService
 
     public Task<IdentityResult> RegisterAsync(string userName, string password) => _userManager.CreateAsync(new RsaUser { UserName = userName }, password);
 
-    public async Task<(IdentityResult, string)> AuthenticateAsync(string userName, string password)
+    public async Task<string?> AuthenticateAsync(string userName, string password)
     {
         var user = await GetUserAsync(userName);
         if (user is null)
-            return (IdentityResult.Failed(new IdentityError() { Description = "user not found" }), "");
+        {
+            _logger.LogError("user not found" );
+            return null;
+        }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
         if (!isPasswordValid)
-            return (IdentityResult.Failed(new IdentityError() { Description = "password isn't correct" }), "");
+        {
+            _logger.LogError( "password isn't correct");
+            return null;
+        }
         var roles = await _userManager.GetRolesAsync(user);
         var token = _tokenService.GenerateToken(user.Id.ToString(), user.UserName, roles);
-        return (IdentityResult.Success, token);
+        return token;
     }
 
     public async Task<IUser?> GetMyUserAsync()
     {
         var userName = _claimService.GetUserName();
+        if (string.IsNullOrEmpty(userName))
+        {
+            _logger.LogInformation("username is not  in the claims");
+            return null;
+        }
         _logger.LogInformation("finding user with userName: {0}", userName);
         var user = await _userManager.FindByNameAsync(userName);
         if (user is null)
