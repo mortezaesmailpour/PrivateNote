@@ -1,9 +1,10 @@
-﻿namespace PrivateNote.Service.Contract; 
+﻿namespace PrivateNote.Service.Contract;
 
-public interface IAuthService
+public interface IAuthService : IAuthService<IUser> { }
+public interface IAuthService<TUser>
 {
-    Task<IUser?> GetUserAsync(string userName);
-    Task<bool> RegisterAsync(string userName, string password);
-    Task<string> AuthenticateAsync(string userName, string password);
-    Task<IUser?> GetMyUserAsync();
+    Task<TUser?> GetUserAsync(string userName);
+    Task<IdentityResult> RegisterAsync(string userName, string password);
+    Task<string?> AuthenticateAsync(string userName, string password);
+    Task<TUser?> GetMyUserAsync();
 }

@@ -25,36 +25,41 @@ public class AuthService : IAuthService
         return user;
     }
 
-    public async Task<bool> RegisterAsync(string userName, string password)
-    {
-        var result = await _userManager.CreateAsync(new RsaUser { UserName = userName }, password);
-        if(result.Succeeded) 
-            return true;
-        _logger.LogError(result.ToString());    
-        return false;
-    }
+    public Task<IdentityResult> RegisterAsync(string userName, string password) => _userManager.CreateAsync(new RsaUser { UserName = userName }, password);
 
-
-    public async Task<string> AuthenticateAsync(string userName, string password)
+    public async Task<string?> AuthenticateAsync(string userName, string password)
     {
         var user = await GetUserAsync(userName);
-        if (user is null) throw new InvalidDataException();
+        if (user is null)
+        {
+            _logger.LogError("user not found" );
+            throw new InvalidDataException("ddddddddddddddddd");
+            return null;
+        }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
         if (!isPasswordValid)
-            throw new InvalidDataException();
+        {
+            _logger.LogError( "password isn't correct");
+            return null;
+        }
         var roles = await _userManager.GetRolesAsync(user);
-        return _tokenService.GenerateToken(user.Id.ToString(), user.UserName, roles);
+        var token = _tokenService.GenerateToken(user.Id.ToString(), user.UserName, roles);
+        return token;
     }
 
     public async Task<IUser?> GetMyUserAsync()
     {
         var userName = _claimService.GetUserName();
+        if (string.IsNullOrEmpty(userName))
+        {
+            _logger.LogInformation("username is not  in the claims");
+            return null;
+        }
         _logger.LogInformation("finding user with userName: {0}", userName);
         var user = await _userManager.FindByNameAsync(userName);
         if (user is null)
             _logger.LogError("user with username = {0} not found! but it was in the token!", userName);
-        else
-            _logger.LogInformation("user found");
+        _logger.LogInformation("user was find {0}",user?.UserName);
         return user;
     }
 }

@@ -2,6 +2,6 @@
 
 public interface IClaimService
 {
-    Guid GetUserId();
-    string GetUserName();
+    Guid? GetUserId();
+    string? GetUserName();
 }

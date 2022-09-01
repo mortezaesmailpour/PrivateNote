@@ -5,9 +5,9 @@ using Repositories.Contracts;
 namespace Repositories;
 public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
 {
-    protected readonly PrivateNoteDbContext _context;
-    protected readonly DbSet<TEntity> _entities;
-    public BaseRepository(PrivateNoteDbContext context)
+    private readonly PrivateNoteDbContext _context;
+    private readonly DbSet<TEntity> _entities;
+    protected BaseRepository(PrivateNoteDbContext context)
     {
         _context = context;
         _entities = context.Set<TEntity>();
@@ -36,7 +36,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
     public async Task<int> DeleteAsync(Guid id)
     {
-        TEntity? entity = _entities.SingleOrDefault(s => s.Id == id);
+        var entity = _entities.SingleOrDefault(s => s.Id == id);
         _ = entity ?? throw new KeyNotFoundException();
         _entities.Remove(entity);
         return await _context.SaveChangesAsync();
