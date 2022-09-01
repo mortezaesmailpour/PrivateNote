@@ -33,6 +33,7 @@ public class AuthService : IAuthService
         if (user is null)
         {
             _logger.LogError("user not found" );
+            throw new InvalidDataException("ddddddddddddddddd");
             return null;
         }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
