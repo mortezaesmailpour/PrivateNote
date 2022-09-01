@@ -15,8 +15,9 @@ public class AuthController : ControllerBase
         _logger = logger;
     }
 
+    private Task<TResult> TryRun2<TResult>(Func<Task<TResult>> action) => action();
     private async Task<TResult> TryRun<TResult>(Func<Task<TResult>> action,
-        [CallerArgumentExpression("action")] string message = "") where TResult : class
+        [CallerArgumentExpression("action")] string message = "") where TResult : class?
     {
         _logger.LogInformation("{0} is starting ...", message);
         Stopwatch stopWatch = new();
@@ -37,72 +38,76 @@ public class AuthController : ControllerBase
         }
     }
 
-    private Task<IUser> GetCurrentUser() => TryRun(() => _authService.GetMyUserAsync());
+    [HttpPost]
+    [AllowAnonymous]
+    private async Task<IActionResult> SignUp(SignUpRequest request)
+    {
+        var result = await TryRun(() => _authService.RegisterAsync(request.UserName, request.Password));
+        if (!result.Succeeded)
+        {
+            _logger.LogError("user registration was failed");
+            return ValidationProblem();
+        }
+        _logger.LogInformation("user was registered successfully");
+        return Ok();
+    }
+    
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest request)
+    {
+        var token = await TryRun(async () =>
+        {
+            var (result ,jwtToken )= await _authService.AuthenticateAsync(request.UserName, request.Password);
+            if (result.Succeeded) return jwtToken;
+            _logger.LogError("user authentication was failed with error {0}",result.Errors);
+            return null;
+        });
+        if (string.IsNullOrEmpty(token))
+            return BadRequest("user authentication was failed");
+        _logger.LogInformation("user was authenticated successfully. token = {0}", token);
+        return Ok(new SignInResponse { Token = token });
+    }
 
     [HttpPost]
     [AllowAnonymous]
-    public Task<IActionResult> SignUp(SignUpRequest request) => TryRun(() => signUp(request));
+    public async Task<IActionResult> RsaSignUp(RsaSignUpRequest request)
+    {
+        var result = await TryRun(() =>
+            _authService.RsaRegisterAsync(request.UserName, request.PublicKey, request.Signature));
+        if (result != IdentityResult.Success)
+        {
+            _logger.LogError("user registration was failed with errors : {0}", result.Errors);
+            return BadRequest("user registration was failed");
+        }
+
+        _logger.LogInformation("user was registered successfully");
+        return Ok();
+    }
+
 
     [HttpPost]
     [AllowAnonymous]
-    public Task<ActionResult<SignInResponse>> SignIn(SignInRequest request) => TryRun(() => signIn(request));
-
-    [HttpPost]
-    [AllowAnonymous]
-    public Task<IActionResult> RsaSignUp(RsaSignUpRequest request) => TryRun(() => rsaSignUp(request));
-
-    [HttpPost]
-    [AllowAnonymous]
-    public Task<ActionResult<RsaSignInResponse>> RsaSignIn(RsaSignInRequest request) =>
-        TryRun(() => rsaSignIn(request));
-
-
+    public async Task<ActionResult<RsaSignInResponse>> RsaSignIn(RsaSignInRequest request)
+    {
+        var token = await TryRun(async () =>
+        {
+            var (result ,encryptedToken )= await _authService.RsaAuthenticateAsync(request.UserName, request.PublicKey, request.Signature);
+            if (result.Succeeded) return encryptedToken;
+            _logger.LogError("user authentication was failed with error {0}",result.Errors);
+            return null;
+        });
+        if (string.IsNullOrEmpty(token))
+            return BadRequest("user authentication was failed");
+        _logger.LogInformation("user was authenticated successfully. encryptedToken = {0}", token);
+        return Ok(new RsaSignInResponse { EncryptedToken = token });
+    }
+    
     [HttpGet]
     public async Task<string> Hello()
     {
-        var user = await GetCurrentUser();
+        var user = await TryRun(() => _authService.GetMyUserAsync());
         return $"Hello {(string.IsNullOrEmpty(user?.UserName) ? "World!" : user?.UserName)}";
-    }
-
-
-    private async Task<IActionResult> signUp(SignUpRequest request)
-    {
-        var result = await _authService.RegisterAsync(request.UserName, request.Password);
-        if (!result)
-        {
-            _logger.LogError("user registeration was faild.");
-            return ValidationProblem();
-        }
-
-        _logger.LogInformation("user was registered successfully.");
-        return Ok();
-    }
-
-    private async Task<ActionResult<SignInResponse>> signIn(SignInRequest request)
-    {
-        var jwtToken = await _authService.AuthenticateAsync(request.UserName, request.Password);
-        _logger.LogInformation("user was authenticated successfully. token = {0}", jwtToken);
-        return Ok(new SignInResponse { Token = jwtToken });
-        //     catch (InvalidDataException e)
-        // {
-        //     _logger.LogError(e, "Username or password in not correct!");
-        //     return BadRequest("Username or Password in not Correct!");
-        // }
-    }
-
-    private async Task<IActionResult> rsaSignUp(RsaSignUpRequest request)
-    {
-        _ = await _authService.RsaRegisterAsync(request.UserName, request.PublicKey, request.Signature);
-        _logger.LogInformation("user was registered successfully.");
-        return Ok();
-    }
-
-    private async Task<ActionResult<RsaSignInResponse>> rsaSignIn(RsaSignInRequest request)
-    {
-        var encryptedToken =
-            await _authService.RsaAuthenticateAsync(request.UserName, request.PublicKey, request.Signature);
-        _logger.LogInformation("user was authenticated successfully. encryptedToken = {0}", encryptedToken);
-        return Ok(new RsaSignInResponse { EncryptedToken = encryptedToken });
     }
 
     [HttpGet]

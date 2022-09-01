@@ -24,9 +24,9 @@ public class NoteService : INoteService
         {
             Id = Guid.NewGuid(),
             CreationTime = time,
-            CreatorUserId = userId,
+            CreatorUserId = userId.Value,
             LastModificationTime = time,
-            LastModifierUserId = userId,
+            LastModifierUserId = userId.Value,
             Title = request?.Title,
             Description = request?.Description,
             PrivateTitle = request?.PrivateTitle,
@@ -45,7 +45,7 @@ public class NoteService : INoteService
 
     public Task<IEnumerable<RsaNote>> GetNotesByUser(RsaUser user) => GetNotesByUserId(user.Id);
 
-    public Task<IEnumerable<RsaNote>> GetMyNotesAsync() => GetNotesByUserId(_claimService.GetUserId());
+    public Task<IEnumerable<RsaNote>> GetMyNotesAsync() => GetNotesByUserId(_claimService.GetUserId().Value);
 
     public Task<RsaNote?> GetNoteAsync(Guid noteId) => _repository.GetByIdAsync(noteId);
 
@@ -60,7 +60,7 @@ public class NoteService : INoteService
         note.PrivateTitle = request.PrivateTitle;
         note.PrivateDescription = request.PrivateDescription;
         note.LastModificationTime = DateTime.Now;
-        note.LastModifierUserId = userId;
+        note.LastModifierUserId = userId.Value;
         var result = await _repository.UpdateAsync(note);
         if (result < 1) 
             return null;
