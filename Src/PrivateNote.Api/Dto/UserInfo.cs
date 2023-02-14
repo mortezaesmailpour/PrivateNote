@@ -2,6 +2,12 @@
 
 public class UserInfo : IUser
 {
+    public UserInfo(Guid id, string userName)
+    {
+        Id = id;
+        UserName = userName;
+    }
+
     public Guid Id { get; init; }
     public string UserName { get; init; }
 

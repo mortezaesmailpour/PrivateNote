@@ -2,5 +2,5 @@
 
 public interface IRsaUser : IUser
 {
-    string PublickKey { get; }
+    string PublicKey { get; }
 }

@@ -4,7 +4,7 @@ namespace PrivateNote.Api.Helpers;
 
 public static class RunHelper
 {
-    public static async Task<TResult> TryRunWithTimeLog<TResult>(Func<Task<TResult>> action,ILogger logger,
+    public static async Task<TResult?> TryRunWithTimeLog<TResult>(Func<Task<TResult>> action,ILogger logger,
         [CallerArgumentExpression("action")] string message = "") where TResult : class?
     {
         logger.LogInformation("{0} is starting ...", message);

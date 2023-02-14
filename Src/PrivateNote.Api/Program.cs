@@ -6,9 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new KeyNotFoundException(" DefaultConnection is not found in Configuration");
 builder.Services.AddDbContext<PrivateNoteDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString ));
 
 services.AddIdentity<RsaUser, Role>()
     .AddEntityFrameworkStores<PrivateNoteDbContext>()
@@ -37,7 +37,7 @@ builder.Services.AddAuthentication(x =>
         x.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? string.Empty)),
             ValidateIssuer = false,
             ValidateAudience = false
         };

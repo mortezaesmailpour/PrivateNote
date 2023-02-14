@@ -33,7 +33,6 @@ public class AuthService : IAuthService
         if (user is null)
         {
             _logger.LogError("user not found" );
-            throw new InvalidDataException("ddddddddddddddddd");
             return null;
         }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
@@ -43,7 +42,7 @@ public class AuthService : IAuthService
             return null;
         }
         var roles = await _userManager.GetRolesAsync(user);
-        var token = _tokenService.GenerateToken(user.Id.ToString(), user.UserName, roles);
+        var token = _tokenService.GenerateToken(user.Id.ToString(), user.UserName!, roles);
         return token;
     }
 

@@ -3,5 +3,5 @@
 public interface IUser
 {
     Guid Id { get; }
-    string UserName { get; }
+    string? UserName { get; }
 }

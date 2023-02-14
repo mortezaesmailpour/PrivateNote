@@ -18,15 +18,15 @@ public class NoteService : INoteService
 
     public async Task<RsaNote?> CreateNoteAsync(CreateNoteRequest request)
     {
-        var userId = _claimService.GetUserId();
+        var userId = _claimService.GetUserId() ?? throw new KeyNotFoundException("User Id not found in the claims");
         var time = DateTime.Now;
         var note = new RsaNote
         {
             Id = Guid.NewGuid(),
             CreationTime = time,
-            CreatorUserId = userId.Value,
+            CreatorUserId = userId,
             LastModificationTime = time,
-            LastModifierUserId = userId.Value,
+            LastModifierUserId = userId,
             Title = request?.Title,
             Description = request?.Description,
             PrivateTitle = request?.PrivateTitle,
@@ -45,7 +45,7 @@ public class NoteService : INoteService
 
     public Task<IEnumerable<RsaNote>> GetNotesByUser(RsaUser user) => GetNotesByUserId(user.Id);
 
-    public Task<IEnumerable<RsaNote>> GetMyNotesAsync() => GetNotesByUserId(_claimService.GetUserId().Value);
+    public Task<IEnumerable<RsaNote>> GetMyNotesAsync() => GetNotesByUserId(_claimService.GetUserId()?? throw new KeyNotFoundException("UserId not found in the claims"));
 
     public Task<RsaNote?> GetNoteAsync(Guid noteId) => _repository.GetByIdAsync(noteId);
 
@@ -60,11 +60,9 @@ public class NoteService : INoteService
         note.PrivateTitle = request.PrivateTitle;
         note.PrivateDescription = request.PrivateDescription;
         note.LastModificationTime = DateTime.Now;
-        note.LastModifierUserId = userId.Value;
+        if (userId != null) note.LastModifierUserId = userId.Value;
         var result = await _repository.UpdateAsync(note);
-        if (result < 1) 
-            return null;
-        return note;
+        return result < 1 ? null : note;
     }
 
     public async Task<bool> DeleteNoteAsync(Guid noteId)

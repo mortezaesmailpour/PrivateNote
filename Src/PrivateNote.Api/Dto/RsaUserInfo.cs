@@ -2,5 +2,9 @@
 
 public class RsaUserInfo : UserInfo, IRsaUser
 {
-    public string PublickKey { get; init; } = String.Empty;
+    public string PublicKey { get; init; } = String.Empty;
+
+    public RsaUserInfo(Guid id, string userName) : base(id, userName)
+    {
+    }
 }

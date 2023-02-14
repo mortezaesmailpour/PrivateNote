@@ -12,7 +12,7 @@ public class JwtTokenService : ITokenService
     public string GenerateToken(string userId, string userName, IList<string> roles)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"] ?? string.Empty);
         var claims = new List<Claim>
             {new Claim(ClaimTypes.NameIdentifier, userId),new Claim(ClaimTypes.Name, userName)};
         foreach (var role in roles)
