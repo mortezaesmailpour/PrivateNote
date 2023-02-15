@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PrivateNote.Data;
+using PrivateNote.Api.Data;
 
 #nullable disable
 
@@ -13,7 +13,7 @@ namespace PrivateNote.Api.Migrations
 {
     [DbContext(typeof(PrivateNoteDbContext))]
     [Migration("20230214180848_init")]
-    partial class init
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

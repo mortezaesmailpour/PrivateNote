@@ -1,6 +1,6 @@
-﻿using PrivateNote.Api.Dto;
-using PrivateNote.Api.Dto.Responses;
-using PrivateNote.Service.Contract;
+﻿using PrivateNote.Api.Contracts.Data;
+using PrivateNote.Api.Contracts.Responses;
+using PrivateNote.Api.Services.Contract;
 
 namespace PrivateNote.Tests.E2E.ApiLayer;
 
@@ -9,7 +9,7 @@ internal class PrivateNoteClient
     private readonly string _baseUrl;
     public PrivateNoteClient()
     {
-        _baseUrl = "http://localhost/api/Auth/";
+        _baseUrl = "http://localhost:5117/api/Auth/";
     }
 
     public async Task<bool> SignUpAsync(string userName, string password)
@@ -88,10 +88,10 @@ internal class PrivateNoteClient
         if (!response.IsSuccessStatusCode)
             //_logger.LogError("token is not valid");
             return null;
-        string responseString = await response.Content.ReadAsStringAsync();
-        var userInfo = JsonConvert.DeserializeObject<UserInfo>(responseString);
+        var responseString = await response.Content.ReadAsStringAsync();
+        var userDto = JsonConvert.DeserializeObject<UserDto>(responseString);
         //if (userInfo is null)
         //    _logger.LogError("Incorrect Json format in SignIn response");
-        return userInfo;
+        return userDto;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace PrivateNote.Model;
+﻿namespace PrivateNote.Api.Data.Model;
 public class RsaNote : Note
 {
     public string? PrivateTitle { get; set; }

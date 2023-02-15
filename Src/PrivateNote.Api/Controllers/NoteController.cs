@@ -1,5 +1,8 @@
-﻿using PrivateNote.Api.Dto.Request;
-using PrivateNote.Data;
+﻿using PrivateNote.Api.Contracts.Requests;
+using PrivateNote.Api.Contracts.Responses;
+using PrivateNote.Api.Data;
+using PrivateNote.Api.Data.Model;
+using PrivateNote.Api.Services.Contract;
 
 namespace PrivateNote.Api.Controllers;
 [Route("api/[controller]")]

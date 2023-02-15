@@ -1,4 +1,8 @@
+using PrivateNote.Api.Contracts.Data;
+using PrivateNote.Api.Contracts.Requests;
+using PrivateNote.Api.Contracts.Responses;
 using PrivateNote.Api.Helpers;
+using PrivateNote.Api.Services.Contract;
 
 namespace PrivateNote.Api.Controllers;
 
@@ -36,7 +40,7 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.RsaRegisterAsync(request.UserName, request.PublicKey, request.Signature);
         if (result != IdentityResult.Success)
-            return BadRequest("user registration was failed");
+            return BadRequest(result?.Errors);
         return Ok();
     }
 
@@ -64,6 +68,6 @@ public class AuthController : ControllerBase
         var user = await RunHelper.TryRunWithTimeLog(() => _authService.GetMyUserAsync(), _logger);
         if (user is null)
             return BadRequest("your user not found.");
-        return Ok(new UserInfo( user.Id, user.UserName! ));
+        return Ok(new UserDto{Id = user.Id,UserName = user.UserName});
     }
 }

@@ -1,6 +1,8 @@
-using PrivateNote.Data;
-using Repositories;
-using Repositories.Contracts;
+using PrivateNote.Api.Data;
+using PrivateNote.Api.Data.Model;
+using PrivateNote.Api.Repositories;
+using PrivateNote.Api.Services;
+using PrivateNote.Api.Services.Contract;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;

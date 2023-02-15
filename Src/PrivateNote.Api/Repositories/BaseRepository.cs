@@ -1,8 +1,7 @@
-﻿using PrivateNote.Contract.Entity;
-using PrivateNote.Data;
-using Repositories.Contracts;
+﻿using PrivateNote.Api.Data;
+using PrivateNote.Api.Data.Entity;
 
-namespace Repositories;
+namespace PrivateNote.Api.Repositories;
 public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
 {
     private readonly PrivateNoteDbContext _context;

@@ -1,7 +1,7 @@
-﻿using PrivateNote.Data;
-using Repositories.Contracts;
+﻿using PrivateNote.Api.Data;
+using PrivateNote.Api.Data.Model;
 
-namespace Repositories;
+namespace PrivateNote.Api.Repositories;
 
 public class NoteRepository : BaseRepository<RsaNote>, INoteRepository
 {
