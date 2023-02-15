@@ -2,9 +2,9 @@ namespace PrivateNote.Api.Domain;
 
 public class User
 {
-    public required Guid Id { get; init; } = Guid.NewGuid();
+    public  Guid Id { get; init; } = Guid.NewGuid();
     
-    public required string Username { get; init; }
+    public  string Username { get; init; }
     
-    public required string PublicKey { get; init; }
+    public  string PublicKey { get; init; }
 }

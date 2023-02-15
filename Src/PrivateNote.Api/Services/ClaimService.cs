@@ -31,7 +31,11 @@ public class ClaimService : IClaimService
     {
         var userNameClaim = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
         if (string.IsNullOrEmpty(userNameClaim?.Value))
-            throw new KeyNotFoundException(ClaimTypes.Name + " is not in the Claims");
+        {
+            _logger.LogError("{0} is not in the Claims", ClaimTypes.Name);
+            return null;
+        }
+        //throw new KeyNotFoundException(ClaimTypes.Name + " is not in the Claims");
         return userNameClaim.Value;
     }
 }
