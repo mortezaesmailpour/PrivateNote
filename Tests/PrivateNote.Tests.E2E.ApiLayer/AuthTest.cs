@@ -72,7 +72,7 @@ public class AuthTests
         encryptedToken.Should().NotBeNull();
 
         // Act
-        var token = rsa.Decrypt(encryptedToken!, privateKey);
+        var token = RsaService.Decrypt(encryptedToken!, privateKey);
 
         // Assert
         token.Should().NotBeNull();

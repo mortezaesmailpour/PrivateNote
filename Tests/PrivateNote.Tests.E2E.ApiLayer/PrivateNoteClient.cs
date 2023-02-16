@@ -4,12 +4,12 @@ using PrivateNote.Api.Services.Contract;
 
 namespace PrivateNote.Tests.E2E.ApiLayer;
 
-internal class PrivateNoteClient
+public class PrivateNoteClient
 {
     private readonly string _baseUrl;
     public PrivateNoteClient()
     {
-        _baseUrl = "http://localhost:5117/api/Auth/";
+        _baseUrl = "http://192.168.1.104/api/Auth/";
     }
 
     public async Task<bool> SignUpAsync(string userName, string password)

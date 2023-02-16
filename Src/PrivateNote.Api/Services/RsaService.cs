@@ -2,11 +2,11 @@
 using PrivateNote.Api.Services.Contract;
 
 namespace PrivateNote.Api.Services;
-public class RsaService : IRsaService
+public class RsaService //: IRsaService
 {
-    private readonly RSAEncryptionPadding _encryptionPadding = RSAEncryptionPadding.Pkcs1;
-    private readonly RSASignaturePadding _signaturePadding = RSASignaturePadding.Pkcs1;
-    private readonly HashAlgorithmName _hashAlgorithm = HashAlgorithmName.SHA256;
+    private static readonly RSAEncryptionPadding _encryptionPadding = RSAEncryptionPadding.Pkcs1;
+    private static readonly RSASignaturePadding _signaturePadding = RSASignaturePadding.Pkcs1;
+    private static readonly HashAlgorithmName _hashAlgorithm = HashAlgorithmName.SHA256;
     private const int MaxDataSize = 245;
     private const int EncryptedBlockSize = 256;
 
@@ -45,7 +45,7 @@ public class RsaService : IRsaService
         }
         return result;
     }
-    public string? Encrypt(string text, string publicKey)
+    public static string? Encrypt(string text, string publicKey)
     {
         var rsa = CreateFromKey(publicKey);
         var textBytes = GetBytes(text);
@@ -69,7 +69,7 @@ public class RsaService : IRsaService
         var encryptedText = Convert.ToBase64String(encryptedBytes);
         return encryptedText;
     }
-    public string? Decrypt(string encryptedText, string privateKey)
+    public static string? Decrypt(string encryptedText, string privateKey)
     {
         var rsa = CreateFromKey(privateKey);
         var encryptedBytes = Convert.FromBase64String(encryptedText);
@@ -93,7 +93,7 @@ public class RsaService : IRsaService
         var decryptedText = GetString(bytes);
         return decryptedText;
     }
-    public string? Sign(string text, string privateKey)
+    public static string? Sign(string text, string privateKey)
     {
         var rsa = CreateFromKey(privateKey);
         var textBytes = GetBytes(text);
@@ -101,7 +101,7 @@ public class RsaService : IRsaService
         var signature = Convert.ToBase64String(signatureBytes);
         return signature;
     }
-    public bool Verify(string text, string signature, string publicKey)
+    public static bool Verify(string text, string signature, string publicKey)
     {
         var rsa = CreateFromKey(publicKey);
         var textBytes = GetBytes(text);
