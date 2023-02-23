@@ -4,9 +4,9 @@ using PrivateNote.Api.Services.Contract;
 namespace PrivateNote.Api.Services;
 public class RsaService //: IRsaService
 {
-    private static readonly RSAEncryptionPadding _encryptionPadding = RSAEncryptionPadding.Pkcs1;
-    private static readonly RSASignaturePadding _signaturePadding = RSASignaturePadding.Pkcs1;
-    private static readonly HashAlgorithmName _hashAlgorithm = HashAlgorithmName.SHA256;
+    private static readonly RSAEncryptionPadding EncryptionPadding = RSAEncryptionPadding.Pkcs1;
+    private static readonly RSASignaturePadding SignaturePadding = RSASignaturePadding.Pkcs1;
+    private static readonly HashAlgorithmName HashAlgorithm = HashAlgorithmName.SHA256;
     private const int MaxDataSize = 245;
     private const int EncryptedBlockSize = 256;
 
@@ -20,6 +20,13 @@ public class RsaService //: IRsaService
         var rsa = new RSACryptoServiceProvider();
         rsa.FromXmlString(key);
         return rsa;
+    }
+    public static string GetPublicKeyFromPrivateKey(string privateKey)
+    {
+        var rsa = new RSACryptoServiceProvider();
+        rsa.FromXmlString(privateKey);
+        var publicKey = rsa.ToXmlString(false);
+        return publicKey;
     }
     private static byte[] GetBytes(string text) => Encoding.Unicode.GetBytes(text);
     private static string GetString(byte[] textBytes) => Encoding.Unicode.GetString(textBytes);
@@ -57,14 +64,14 @@ public class RsaService //: IRsaService
             for (var i = 0; i < listOfTextBytes.Count; i++)
             {
                 var item = listOfTextBytes[i];
-                var encryptedItem = rsa.Encrypt(item, _encryptionPadding);
+                var encryptedItem = rsa.Encrypt(item, EncryptionPadding);
                 encryptedBytesList.Add(encryptedItem);
             }
             encryptedBytes = Merge(encryptedBytesList);
         }
         else
         {
-            encryptedBytes = rsa.Encrypt(textBytes, _encryptionPadding);
+            encryptedBytes = rsa.Encrypt(textBytes, EncryptionPadding);
         }
         var encryptedText = Convert.ToBase64String(encryptedBytes);
         return encryptedText;
@@ -81,14 +88,14 @@ public class RsaService //: IRsaService
             for (var i = 0; i < listOfEncryptedBytes.Count; i++)
             {
                 var item = listOfEncryptedBytes[i];
-                var decryptedBytes = rsa.Decrypt(item, _encryptionPadding);
+                var decryptedBytes = rsa.Decrypt(item, EncryptionPadding);
                 decryptedBytesList.Add(decryptedBytes);
             }
             bytes = Merge(decryptedBytesList);
         }
         else
         {
-            bytes = rsa.Decrypt(encryptedBytes, _encryptionPadding);
+            bytes = rsa.Decrypt(encryptedBytes, EncryptionPadding);
         }
         var decryptedText = GetString(bytes);
         return decryptedText;
@@ -97,7 +104,7 @@ public class RsaService //: IRsaService
     {
         var rsa = CreateFromKey(privateKey);
         var textBytes = GetBytes(text);
-        var signatureBytes = rsa.SignData(textBytes, _hashAlgorithm, _signaturePadding);
+        var signatureBytes = rsa.SignData(textBytes, HashAlgorithm, SignaturePadding);
         var signature = Convert.ToBase64String(signatureBytes);
         return signature;
     }
@@ -106,7 +113,7 @@ public class RsaService //: IRsaService
         var rsa = CreateFromKey(publicKey);
         var textBytes = GetBytes(text);
         var signatureBytes = Convert.FromBase64String(signature);
-        var result = rsa.VerifyData(textBytes, signatureBytes, _hashAlgorithm, _signaturePadding);
+        var result = rsa.VerifyData(textBytes, signatureBytes, HashAlgorithm, SignaturePadding);
         return result;
     }
 }

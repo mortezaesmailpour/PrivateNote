@@ -26,7 +26,7 @@ public class PrivateNoteClient
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<string?> SignInAsync(string userName, string password)
+    public async Task<string> SignInAsync(string userName, string password)
     {
         var signInData = new Dictionary<string, string>();
         signInData.Add("UserName", userName);
@@ -38,7 +38,7 @@ public class PrivateNoteClient
         if (!response.IsSuccessStatusCode)
             //_logger.LogError("Incorrect Username or Password");
             return null;
-        string responseString = await response.Content.ReadAsStringAsync();
+        var responseString = await response.Content.ReadAsStringAsync();
         var signInResponse = JsonConvert.DeserializeObject<SignInResponse>(responseString);
         //if (signInResponse is null)
         //    _logger.LogError("Incorrect Json format in SignIn response");
@@ -60,7 +60,7 @@ public class PrivateNoteClient
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<string?> RsaSignInAsync(string userName, string publicKey, string signature)
+    public async Task<string> RsaSignInAsync(string userName, string publicKey, string signature)
     {
         var signInData = new Dictionary<string, string>();
         signInData.Add("UserName", userName);
